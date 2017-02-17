@@ -1,12 +1,12 @@
 
 ## Overview
 
-This guide will walk you through using [Duplicati](https://www.duplicati.com/) to perform schedule backups of your Windows Server to Cloud Object Storage. We will also show how to restore files from Cloud Object Storage using Duplicati. 
+This guide will walk you through using [Duplicati](https://www.duplicati.com/) to perform schedule backups of your Windows Server to Cloud Object Storage (S3). We will also show how to restore files from Cloud Object Storage (S3) using Duplicati. 
 
 ### Prerequisites 
-	- Duplicati downloaded and installed on the Windows Server - [Duplicati Download Link](https://www.duplicati.com/download) (Installation requires elevated priveleges)
-	- Cloud Object Storage Account credentials
-	- Port 80 (http) and/or 443 (https) open for inbound and outbound communication with the Cloud Object Storage endpoints. Port 443 is required if you choose the SSL option during the backup configuration process. 
+	- Duplicati downloaded and installed on the Windows Server - https://www.duplicati.com/download (Installation requires elevated priveleges)
+	- Cloud Object Storage (S3) Account credentials
+	- Port 80 (http) and/or 443 (https) open for inbound and outbound communication with the Cloud Object Storage (S3) endpoints. Port 443 is required if you choose the SSL option during the backup configuration process. 
 	- Firefox or Google Chrome installed if you would like to use SSL. Internet Explorer has an issue which prevents you from changing a key Advanced Option that is needed for SSL to work properly. 
 
 ### Running Duplicati for the first time 
@@ -19,7 +19,7 @@ To create a backup job click on 'Add backup', provide the backup job a name and 
 
 ![Create Backup Job](http://i.imgur.com/AcAIQvB.png) 
 
-On the subsequent page you will choose 'S3 Compatible' from the drop-down next to Storage Type click the 'Use SSL' checkbox and in the Server drop-down choose Custom URL. This will provide you with an additional box to specify the US Geo Cloud Object Storage endpoint. In this example I am using the Private network endpoint (s3-api.us-geo.objectstorage.service.networklayer.com). Provide a name for the bucket you would like the backups to go to. Duplicati will create the bucket if it does not already exist. You can leave both 'Bucket create region' and 'Storage class' set to Default and then specify a sub-folder for your backups to reside in if you so desire. In the bottom 2 boxes provide your 'Access Key ID' and 'Secret Access Key'. Due to incompatibility with SSLv3 and TLS1 we will need to make one more adjustment. To do this click on 'Advanced options', select 'allowed-ssl-versions' from the drop-down, and set the version to either TLS1.1 or TLS1.2. 
+On the subsequent page you will choose 'S3 Compatible' from the drop-down next to Storage Type click the 'Use SSL' checkbox and in the Server drop-down choose Custom URL. This will provide you with an additional box to specify the US Geo Cloud Object Storage (S3) endpoint. In this example I am using the Private network endpoint (s3-api.us-geo.objectstorage.service.networklayer.com). Provide a name for the bucket you would like the backups to go to. Duplicati will create the bucket if it does not already exist. You can leave both 'Bucket create region' and 'Storage class' set to Default and then specify a sub-folder for your backups to reside in if you so desire. In the bottom 2 boxes provide your 'Access Key ID' and 'Secret Access Key'. Due to incompatibility with SSLv3 and TLS1 we will need to make one more adjustment. To do this click on 'Advanced options', select 'allowed-ssl-versions' from the drop-down, and set the version to either TLS1.1 or TLS1.2. 
 
 ![Set COS Credentials](http://i.imgur.com/xM1VcZ6.png)
 
@@ -27,7 +27,7 @@ Click 'Test Connection' and you will likely be greeted with the message 'The buc
 
 ![Test Connection](http://i.imgur.com/UvjRyle.png)
 
-On this page you will select the files and/or the directories you would like to backup to Cloud Object Storage. The configuration supports filtering and the ability to exlude certain files based on specific attributes. When you have selected the files/directories to backup click Next to set your backup schedule. 
+On this page you will select the files and/or the directories you would like to backup to Cloud Object Storage (S3). The configuration supports filtering and the ability to exlude certain files based on specific attributes. When you have selected the files/directories to backup click Next to set your backup schedule. 
 
 ![Choose Files and Directories to backup](http://i.imgur.com/nUcK0b6.png)
 
@@ -39,7 +39,7 @@ With your schedule set click Next and set the 'Upload' (chunk) size for the back
 
 ### Restoring Files
 
-The first time you start a restore process in Duplicati you will be prompted for your Cloud Object Storage credentials again. Follow the same steps as you did when first creating the backup including changing the Allowed SSL Versions under the Advanced Options settings. Test the connection and if everything worked, click Next. 
+The first time you start a restore process in Duplicati you will be prompted for your Cloud Object Storage (S3) credentials again. Follow the same steps as you did when first creating the backup including changing the Allowed SSL Versions under the Advanced Options settings. Test the connection and if everything worked, click Next. 
 
 ![Set restore credentials](http://i.imgur.com/BVdFBRy.png)
 
