@@ -1,5 +1,5 @@
 # Overview
-In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in Cloud Object Storage. 
+In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in Cloud Object Storage (S3). 
 
 ## Prerequisites
 	- One or more linux server with rsnapshot, rsync, and s3cmd installed. 
@@ -18,7 +18,7 @@ For a guide on generating your servers public ssh-key as well as how to copy it 
 
 ## Setting up and Configuring rsnapshot
 
-The rsnapshot utility will be used to backup our local system as well as remote-hosts to a single directory. This will allow us to then compress those backups and send them to Cloud Object Storage using the `s3cmd` utility. 
+The rsnapshot utility will be used to backup our local system as well as remote-hosts to a single directory. This will allow us to then compress those backups and send them to Cloud Object Storage (S3) using the `s3cmd` utility. 
 
 We are including an example `rsnapshot.conf` file that you can use as well. The example file has the following defaults: 
 
@@ -154,17 +154,44 @@ $ s3cmd ls
 2017-02-07 17:44  s3://winbackup
 ```
 
-**A Note About Buckets** - Cloud Object Storage has a 100 bucket limit per account. Keep this in mind if you set up each backup to create its own bucket or do a per month bucket.  
+**A Note About Buckets** - Cloud Object Storage (S3) has a 100 bucket limit per account. Keep this in mind if you set up each backup to create its own bucket or do a per month bucket.  
 
-### Pushing backups to Cloud Object Storage 
 
-To manually push your backups to Cloud Object Storage I would recommend using tar to compress the backup directory with a date stamp for easier sorting should you need to pull the backups from Cloud Object Storage for restoration. 
+### Pushing backups to Cloud Object Storage (S3) 
+
+To manually push your backups to Cloud Object Storage (S3) I would recommend using tar to compress the backup directory with a date stamp for easier sorting should you need to pull the backups from Cloud Object Storage (S3) for restoration.
 
 ```
 tar -czf $(date "+%F").backup.tar.gz /backups/
 s3cmd put $(date "+%F").backup.tar.gz s3://coldbackups/
 ```
 
+To automate this process you would likely want to a use a cron job to commpress the backups and send them to Cloud Object Storage (S3) at regular intervals. 
 
+**A Note About Retention** - Cloud Object Storage (S3) does not currently support a retention scheme. This means that whatever you push to COS (S3) will remain there until you delete it. 
+
+## Restoring Files from Cloud Object Storage (S3) 
+
+To restore a file or directory from Cloud Object Storage (S3) you will need to use the `get` command to pull down the backup. Once the file or directory has been downloaded to your server you can use `cp`, `rsync`, or `mv` to restore the file. If the file was from a remote host backed up using `rsnapshot` you would use `scp` or `rsync` to move it back to the original host system.
+
+### To pull a single file or compressed backup 
+By default the file you download from Cloud Object Storage (S3) will be stored in the same directory you are currently in. 
+
+```
+$ sc3md get s3://bucket/path/to/file
+```
+
+You can also specify the directory you would like the downloaded file stored in: 
+
+```
+$ s3cmd get s3://bucket/path/to/file /local/path/ 
+```
+
+### To pull a directory 
+In order to pull a directory as well as all sub-items, use the `--recursive` flag 
+
+```
+$ s3cmd get s3://bucket/ /local/path/ --recursive 
+```
 
 

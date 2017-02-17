@@ -21,7 +21,7 @@ In order for the system to pick up these variables close the command line utilit
 echo %COS_ACCESS_KEY%
 ```
 
-## Initial Backup
+## Initial Duplicati Backup 
 With the variables set we can now run our initial backup command. The first step is to change in to the Duplicati directory. 
 
 ```
@@ -70,9 +70,7 @@ Scanning local files ...
 ## Automating Duplicati Command line backups
 
 
-
-
-
+## Restoring Duplicati Command line backups
 
 
 
