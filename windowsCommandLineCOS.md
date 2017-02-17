@@ -31,7 +31,7 @@ C:\Users\Administrator>cd "C:\Program Files\Duplicati 2\"
 Once we are in the correct directory we will invoke the backup command. The syntax is as follows 
 
 ```
-Duplicati.CommandLine.exe backup BUCKET "X:\Path\to\backup" OPTIONS
+Duplicati.CommandLine.exe backup BUCKET_URL "X:\Path\to\backup" OPTIONS
 ```
 
 The OPTIONS in this case will be:
@@ -72,6 +72,47 @@ Scanning local files ...
 
 ## Restoring Duplicati Command line backups
 
+The syntax for restoring from Duplicati backups is pretty similar to the backup command. 
+
+```
+Duplicati.CommandLine.exe restore BUCKET_URL <filename> OPTIONS
+```
+
+The OPTIONS in this case will be:
+
+    --passphrase - This is the passphrase that is used to encrypt all data before it is uploaded.
+    --s3-server-name - The Cloud Object Storage endpoint. 
+    --auth-username - The Cloud Object Storage Access Key. 
+    --auth-password - The Cloud Object Storage Secret Key
+    --restore-path - The path to restore the files to instead of their original location. 
+
+If choosing to restore to the file/directories original lcoation, <filename> is changed to <filename-timestamp.extension>. To restore all files use "*" or leave empty.
+
+In this example we will be restoring our full backup to the Desktop so that we can inspect the files before replacing the current versions on our system:
+
+```
+Duplicati.CommandLine.exe restore s3://dupbackup/ * --restore-path="C:\Users\Administrator\Desktop" --s3-server-name=s3-api.us-geo.objectstorage.softlayer.net --passphrase=%PASSPHRASE% --auth-username=%COS_ACCESS_KEY% --auth-password=%COS_SECRET_KEY%
+
+Restore started at 2/17/2017 12:33:49 PM
+Checking remote backup ...
+  Listing remote folder ...
+Searching backup 0 (2/16/2017 8:30:03 PM) ..
+  51 files need to be restored (20.72 GB)
+Checking existing target files ...
+Scanning local files for needed data ...
+  49 files need to be restored (19.69 GB)
+  29 files need to be restored (11.00 GB)
+  9 files need to be restored (3.74 GB)
+28 remote files are required to restore
+  Downloading file (49.93 MB) ...
+  0 files need to be restored (0 bytes)
+  Downloading file (49.91 MB) ...
+  Downloading file (49.97 MB) ...
+  Downloading file (49.94 MB) ...
+  Downloading file (49.94 MB) ...
+  Downloading file (49.92 MB) ...
+  Downloading file (49.90 MB) ...
+```
 
 
 
