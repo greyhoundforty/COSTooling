@@ -1,5 +1,5 @@
 # Overview
-In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in Cloud Object Storage (S3). 
+In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in Cloud Object Storage (S3). The command rsnapshot will be used to generate the backups of the host system as well as remote linux systems if required. The s3cmd utility is used to push these backups to Cloud Object Storage (S3). 
 
 ## Prerequisites
 	- One or more linux server with rsnapshot, rsync, and s3cmd installed. 
