@@ -65,6 +65,13 @@ configure_s3cmd() {
   		private|Private) sed -i "s|cos_endpoint|s3-api.us-geo.objectstorage.service.networklayer.com|g" $HOME/.s3cfg ;; 
   		*) echo "Did not set an endpoint, you will need to manually update the ~/.s3cfg config file." ;; 
 	esac
+  echo "We will now test our config file by creating a test bucket"
+  s3cmd mb s3://testbckt
+
+  # put logic in here that if mb succeeds then we echo and
+  # remove the test bucket 
+  # if it fails alert the user to double check the config 
+  
 }
 
 #cos_backup_schedule() { 
@@ -73,6 +80,8 @@ configure_s3cmd() {
 # to compress the backups and send them to COS (S3) 
 
 #}
+
+# tar -czf $(date "+%F").backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
 
 set_install_variables
 install_tools
