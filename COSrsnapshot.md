@@ -3,7 +3,7 @@ In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to 
 
 ## Prerequisites
 	- One or more linux server with rsnapshot, rsync, and s3cmd installed. 
-		- RHEL/CentOS: yum install s3cmd rsnapshot rsync
+		- RHEL/CentOS: yum install s3cmd rsnapshot rsync (you may need to add the epel repo)
 		- Ubuntu/Debian: apt-get install s3cmd rsnapshot rsync 
 	- SSH-Keys generated on your main backup server. In this guide that is referred to as 'Backupserver'
 	- SSH port open on your servers firewall. Rsnapshot uses rsync, which in turn uses SSH to pull backups from the remote-hosts so you will want to ensure you have the proper port whitelisted. 
