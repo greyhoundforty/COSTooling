@@ -140,7 +140,7 @@ By default the `alpha` job will run every 4 hours, the beta every day at 03:30am
 The `s3cmd` python script is an open-source utility that allows a *nix or osx box to talk to S3 compatible services. After the utility is installed all the customer has to do is download our example `.s3cfg` file and update it with their COS Access and Secret Key:
 
 ```
- wget -O $HOME/.s3cfg https://gist.githubusercontent.com/greyhoundforty/a4a9d80a942d22a8a7bf838f7abbcab2/raw/05ad584edee4370f4c252e4f747abb118d0075cb/example.s3cfg
+ wget -O $HOME/.s3cfg https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/422abaeb70f1c17cd5308745c0e446b047c123e0/s3cfg
 ```
 
 The 2 lines that need to be updated are 2 and 55 (if they are using our example .s3cfg file). The lines begin with `access_key` and `secret_key` respectively. Once those lines have been updated with the COS details from the Customer portal you can test the connection by issuing the command `s3cmd ls` which will list all the buckets on the account. 

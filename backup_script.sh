@@ -58,7 +58,7 @@ configure_s3cmd() {
 	read COS_SECRET_KEY
 	sed -i "s|cos_secret_key|$COS_SECRET_KEY|" $HOME/.s3cfg
 	echo 
-	echo -n "Would you like to use the Public or Private Cloud Object Storage (S3) endpoint?  "
+	echo -n "Would you like to use the Public or Private Cloud Object Storage (S3) endpoint?\n:: "
 	read ENDPOINT 
 	case $ENDPOINT in  
   		public|Public) sed -i "s|cos_endpoint|s3-api.us-geo.objectstorage.softlayer.net|g" $HOME/.s3cfg;; 
@@ -67,10 +67,13 @@ configure_s3cmd() {
 	esac
   echo "We will now test our config file by creating a test bucket"
   s3cmd mb s3://testbckt
-
-  # put logic in here that if mb succeeds then we echo and
-  # remove the test bucket 
-  # if it fails alert the user to double check the config 
+  if [ `s3cmd ls | egrep 'testbckt' | wc -l` = "1" ];then
+    echo "s3cmd configuration test passed"
+    echo "Removing test bucket"
+    nohup s3cmd rb s3://testbckt/ & disown 
+  else
+    echo "Bucket creation did not succeed, double check your $HOME/.s3cfg configuration file."
+  fi
   
 }
 
