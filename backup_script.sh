@@ -14,6 +14,11 @@ set_install_variables()	{
           OS_VENDOR="REDHAT"
     fi
     OS_INSTALL_TOOL="/usr/bin/yum -y install"
+      if [ ${OS_VENDOR} = "REDHAT" ] && [ ${MAJOR_VERSION} = "6" ]; then
+    rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+      elif [ ${OS_VENDOR} = "REDHAT" ] && [ ${MAJOR_VERSION} = "7" ]; then
+    rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+      fi
   elif [ -e /usr/bin/lsb_release ] ; then
     echo "Debian based distribution detected..."
     OS_VENDOR=`lsb_release -si | tr '[a-z]' '[A-Z]'`
@@ -24,11 +29,7 @@ set_install_variables()	{
 }
 
 install_tools() {
-	if [ ${OS_VENDOR} = "REDHAT" ] && [ ${MAJOR_VERSION} = "6" ]; then
-		rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-	elif [ ${OS_VENDOR} = "REDHAT" ] && [ ${MAJOR_VERSION} = "7" ]; then
-		rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
-	fi	
+		
 	$OS_INSTALL_TOOL s3cmd rsync rsnapshot wget 
 }
 
