@@ -29,9 +29,9 @@ set_install_variables()	{
       elif [ "${OS_VENDOR}" = "CENTOS" ] && [ "${MAJOR_VERSION}" = "6" ]; then
         rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
       elif [ "${OS_VENDOR}" = "REDHAT" ] && [ "${MAJOR_VERSION}" = "7" ]; then
-    rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+        yum install epel-release -y
       elif [ "${OS_VENDOR}" = "CENTOS" ] && [ "${MAJOR_VERSION}" = "7" ]; then
-    rpm -Uvh http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+        yum install epel-release -y
       fi
   elif [ -e /usr/bin/lsb_release ] ; then
     echo "Debian based distribution detected..."
@@ -45,7 +45,6 @@ set_install_variables()	{
 
 
 install_tools() {
-	$OS_INSTALL_TOOL update -y
 	$OS_INSTALL_TOOL s3cmd rsync rsnapshot wget 
 }
 
@@ -68,14 +67,15 @@ configure_s3cmd() {
 	wget -O "$HOME/.s3cfg" https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/f6ce1f2248c415cefac4eec4f1c112ad4a03a0d1/s3cfg
 	echo 
 	echo 
-	echo -n "Please supply your Cloud Object Storage (S3) Access Key:\n:: "
+	echo -en "Please supply your Cloud Object Storage (S3) Access Key:\n:: "
 	read -s COS_ACCESS_KEY
 	sed -i "s|cos_access_key|$COS_ACCESS_KEY|" "$HOME"/.s3cfg
-	echo -n "Please supply your Cloud Object Storage (S3) Secret Key:\n:: "
+  echo ""
+	echo -en "Please supply your Cloud Object Storage (S3) Secret Key:\n:: "
 	read -s COS_SECRET_KEY
 	sed -i "s|cos_secret_key|$COS_SECRET_KEY|" "$HOME/.s3cfg"
 	echo 
-	echo -n "Would you like to use the Public or Private Cloud Object Storage S3 endpoint?\n:: "
+	echo -en "Would you like to use the Public or Private Cloud Object Storage S3 endpoint?\n:: "
 	read ENDPOINT 
 	case "$ENDPOINT" in  
   		public|Public) sed -i "s|cos_endpoint|s3-api.us-geo.objectstorage.softlayer.net|g" "$HOME/.s3cfg";; 
