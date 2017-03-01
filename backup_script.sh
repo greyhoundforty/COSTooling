@@ -10,7 +10,7 @@ overview
 
 check_your_privilege () {
     if [[ "$(id -u)" != 0 ]]; then
-        echo -e "\e[91mError: This setup script requires root permissions. Please run the script as root by issuing the command 'sudo ./backup_script.sh .\e[0m" > /dev/stderr
+        echo -e "\e[91mError: This setup script requires root permissions. Please run the script as root by issuing the command 'sudo ./backup_script.sh'\e[0m" > /dev/stderr
         exit 1
     fi
 }
@@ -100,10 +100,10 @@ configure_s3cmd() {
 
 post_install() {
 
-echo "Installation and configuration of rsnapshot and s3cmd has completed."
-echo "Please note that by default this script only configures rsnapshot to backup this system."
-echo "If you would like to add remote systems for rsnapshot to also backup, you will need to edit the /etc/rsnapshot.conf file."
-echo "The following guide should assist in setting up remote hosts in rsnapshot: LINK TO THING I WRITE ABOUT THIS"
+  echo -e "\r\033[K\e[36mInstallation and configuration of rsnapshot and s3cmd has completed.\e[0m"
+  echo -e "\r\033[K\e[36mPlease note that by default this script only configures rsnapshot to backup this system.\e[0m"
+  echo -e "\r\033[K\e[36mIf you would like to add remote systems for rsnapshot to also backup, you will need to edit the /etc/rsnapshot.conf file.\e[0m"
+  echo -e "\r\033[K\e[36mThe following guide should assist in setting up remote hosts in rsnapshot: LINK TO THING I WRITE ABOUT THIS\e[0m"
 }
 
 
