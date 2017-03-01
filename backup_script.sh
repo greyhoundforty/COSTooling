@@ -1,6 +1,7 @@
 #!/bin/bash
 
-## v1 - everything runs as root (current version)
+hst=$(hostname -s)
+
 overview() { 
   echo -e "\r\033[K\e[36mThis script will install s3cmd and rsnapshot on your server and help with some basic backup configurations.\e[0m"
   echo -e "\r\033[K\e[36mBy default rsnapshot is configured to only backup this system, but can be configured to backup remote systems as well.\e[0m"
@@ -49,8 +50,6 @@ set_install_variables()	{
   fi
 }
 
-
-
 install_tools() {
 	sudo $OS_INSTALL_TOOL s3cmd rsync rsnapshot wget >/dev/null 
 }
@@ -63,10 +62,11 @@ configure_rsnapshot()
   echo
   echo -n -e "\r\033[K\e[36mPlease supply the directory you would like to use to store your backups. Use the full path with a trailing slash (example: /backups/)\e[0m  "
   read RSNAPSHOT_BACKUP_DIR
-  echo "Set rsnapshot backup directory to ${RSNAPSHOT_BACKUP_DIR}"
+  echo ""
+  echo -e "\e[91mSet rsnapshot backup directory to ${RSNAPSHOT_BACKUP_DIR}\e[0m"
   
   sudo sed -i "s|BACKUP_DIR|$RSNAPSHOT_BACKUP_DIR|" /etc/rsnapshot.conf
-  echo "Testing rsnapshot configuration"
+  echo -e "\e[91mTesting rsnapshot configuration.\e[0m"
   rsnapshot configtest
 }
 
@@ -87,24 +87,26 @@ configure_s3cmd() {
 	read ENDPOINT 
   sed -i "s|cos_endpoint|$ENDPOINT|g" "$HOME/.s3cfg"
   echo ""
-  echo "We will now test our config file by creating a test bucket"
-  s3cmd mb s3://testbckt
-  if [ $(s3cmd ls | egrep 'testbckt' | wc -l) = "1" ];then
-    echo "s3cmd configuration test passed"
-    echo "Removing test bucket"
-    nohup s3cmd rb s3://testbckt/ & disown 
+  echo -e "\r\033[K\e[36mWe will now test our config file by creating a test bucket based on your systems hostname.\e[0m"
+  s3cmd mb s3://"$hst"
+  if [ $(s3cmd ls | egrep "$hst" | wc -l) = "1" ];then
+    echo -e "\e[91ms3cmd configuration test passed. Now Removing test bucket.\e[0m"
+    nohup s3cmd rb s3://"$hst" & disown 
   else
-    echo "Bucket creation did not succeed, double check your HOME/.s3cfg configuration file."
+    echo -e "\e[91mError: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.\e[0m"
   fi
   
 }
 
 post_install() {
-
   echo -e "\r\033[K\e[36mInstallation and configuration of rsnapshot and s3cmd has completed.\e[0m"
-  echo -e "\r\033[K\e[36mPlease note that by default this script only configures rsnapshot to backup this system.\e[0m"
-  echo -e "\r\033[K\e[36mIf you would like to add remote systems for rsnapshot to also backup, you will need to edit the /etc/rsnapshot.conf file.\e[0m"
-  echo -e "\r\033[K\e[36mThe following guide should assist in setting up remote hosts in rsnapshot: LINK TO THING I WRITE ABOUT THIS\e[0m"
+  echo ""
+  echo -e "\e[91mPlease note that by default this script only configures rsnapshot to backup this system.\e[0m" 
+  echo -e "\e[91mIf you would like to add remote systems for rsnapshot to also backup, you will need to edit the /etc/rsnapshot.conf file.\e[0m"
+  echo -e "\e[91mThe following guide should assist in setting up remote hosts in rsnapshot:\e[0m" 
+
+  echo -e "\r\033[K\e[36mhttps://github.com/greyhoundforty/COSTooling/blob/master/rsnapshot.md\e[0m"
+
 }
 
 
