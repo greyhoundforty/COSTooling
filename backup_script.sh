@@ -4,14 +4,15 @@
 overview() { 
   echo -e "\r\033[K\e[36mThis script will install s3cmd and rsnapshot on your server and help with some basic backup configurations.\e[0m"
   echo -e "\r\033[K\e[36mBy default rsnapshot is configured to only backup this system, but can be configured to backup remote systems as well.\e[0m"
+  echo ""
 }
 
 overview
 
 check_your_privilege () {
     if [[ "$(id -u)" != 0 ]]; then
-        echo -e "\e[91mError: This setup script requires root permissions. Please run the script as root by issuing the command 'sudo ./backup_script.sh'\e[0m" > /dev/stderr
-        exit 1
+        echo -e "\e[91mNote: This setup script requires root permissions. You will be prompted for your sudo password.\e[0m"
+        echo ""
     fi
 }
 
@@ -31,13 +32,13 @@ set_install_variables()	{
     OS_INSTALL_TOOL="/usr/bin/yum -y install"
     MAJOR_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
       if [ "${OS_VENDOR}" = "REDHAT" ] && [ "${MAJOR_VERSION}" = "6" ]; then
-        rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm >/dev/null 2>>install.log
+        sudo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm >/dev/null
       elif [ "${OS_VENDOR}" = "CENTOS" ] && [ "${MAJOR_VERSION}" = "6" ]; then
-        rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm >/dev/null 2>>install.log
+        sudo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm >/dev/null 
       elif [ "${OS_VENDOR}" = "REDHAT" ] && [ "${MAJOR_VERSION}" = "7" ]; then
-        yum install epel-release -y >/dev/null 2>>install.log
+        sudo yum install epel-release -y >/dev/null 
       elif [ "${OS_VENDOR}" = "CENTOS" ] && [ "${MAJOR_VERSION}" = "7" ]; then
-        yum install epel-release -y >/dev/null 2>>install.log
+        sudo yum install epel-release -y >/dev/null 
       fi
   elif [ -e /usr/bin/lsb_release ] ; then
     echo -e "\r\033[K\e[36mDebian based distribution detected...\e[0m"
@@ -51,20 +52,20 @@ set_install_variables()	{
 
 
 install_tools() {
-	$OS_INSTALL_TOOL s3cmd rsync rsnapshot wget >/dev/null 2>>install.log
+	sudo $OS_INSTALL_TOOL s3cmd rsync rsnapshot wget >/dev/null 
 }
 
 configure_rsnapshot()
 {
-  mv /etc/rsnapshot.conf{,.bak}
-  wget -O /etc/rsnapshot.conf https://gist.githubusercontent.com/greyhoundforty/6b6975d973f5550fce69b71ed8485d34/raw/4091bb17f03dc9b0a3f745b348e686db14b4027e/rsnapshotv2.conf
+  sudo mv /etc/rsnapshot.conf{,.bak}
+  sudo wget -O /etc/rsnapshot.conf https://gist.githubusercontent.com/greyhoundforty/6b6975d973f5550fce69b71ed8485d34/raw/4091bb17f03dc9b0a3f745b348e686db14b4027e/rsnapshotv2.conf
   echo
   echo
   echo -n -e "\r\033[K\e[36mPlease supply the directory you would like to use to store your backups. Use the full path with a trailing slash (example: /backups/)\e[0m  "
   read RSNAPSHOT_BACKUP_DIR
   echo "Set rsnapshot backup directory to ${RSNAPSHOT_BACKUP_DIR}"
   
-  sed -i "s|BACKUP_DIR|$RSNAPSHOT_BACKUP_DIR|" /etc/rsnapshot.conf
+  sudo sed -i "s|BACKUP_DIR|$RSNAPSHOT_BACKUP_DIR|" /etc/rsnapshot.conf
   echo "Testing rsnapshot configuration"
   rsnapshot configtest
 }
