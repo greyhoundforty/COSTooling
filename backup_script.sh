@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Author: Ryan TIffany
 # Email: rtiffany@us.ibm.com
