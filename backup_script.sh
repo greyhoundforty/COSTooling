@@ -1,15 +1,20 @@
 #!/bin/bash
 
+# Author: Ryan TIffany
+# Email: rtiffany@us.ibm.com
+
+# Script Variables 
+today=$(date "+%F")
 hst=$(hostname -s)
 
+# Short description 
 overview() { 
   echo -e "\r\033[K\e[36mThis script will install s3cmd and rsnapshot on your server and help with some basic backup configurations.\e[0m"
   echo -e "\r\033[K\e[36mBy default rsnapshot is configured to only backup this system, but can be configured to backup remote systems as well.\e[0m"
   echo ""
 }
 
-overview
-
+# If user is not root, the script will warn them that they will need to use sudo for the install and sed commands. 
 check_your_privilege () {
     if [[ "$(id -u)" != 0 ]]; then
         echo -e "\e[91mNote: This setup script requires root permissions. You will be prompted for your sudo password.\e[0m"
@@ -17,14 +22,12 @@ check_your_privilege () {
     fi
 }
 
-check_your_privilege
-
+# Set OS specific variables.
 set_install_variables()	{
 
-  # OS specific variables.
   if [ -e /etc/redhat-release ] ; then
     echo -e "\r\033[K\e[36mRed Hat based distribution detected...\e[0m"
-    OS_VENDOR=$(awk '{print $1}' /etc/redhat-release | tr '[a-z]' '[A-Z]')
+    OS_VENDOR=$(awk '{print $1}' /etc/redhat-release | tr '[:lower:]' '[:upper:]')
     if [ "${OS_VENDOR}" = "RED" ]; then
           OS_VENDOR="REDHAT"
     elif [ "${OS_VENDOR}" = "CENTOS" ]; then
@@ -43,17 +46,16 @@ set_install_variables()	{
       fi
   elif [ -e /usr/bin/lsb_release ] ; then
     echo -e "\r\033[K\e[36mDebian based distribution detected...\e[0m"
-    OS_VENDOR=$(lsb_release -si | tr '[a-z]' '[A-Z]')
-    OS_VERSION_MAJOR=$(lsb_release -sr | cut -d. -f1)
-    OS_VERSION_MINOR=$(lsb_release -sr | cut -d. -f2)
     OS_INSTALL_TOOL="apt-get -y install"
   fi
 }
 
+# Install the needed packages for our backup configuration 
 install_tools() {
-	sudo $OS_INSTALL_TOOL s3cmd rsync rsnapshot wget >/dev/null 
+	sudo "$OS_INSTALL_TOOL" s3cmd rsync rsnapshot wget >/dev/null 
 }
 
+# Download example rsnapshot.conf and set backup directory 
 configure_rsnapshot()
 {
   sudo mv /etc/rsnapshot.conf{,.bak}
@@ -61,7 +63,7 @@ configure_rsnapshot()
   echo
   echo
   echo -n -e "\r\033[K\e[36mPlease supply the directory you would like to use to store your backups. Use the full path with a trailing slash (example: /backups/)\e[0m  "
-  read RSNAPSHOT_BACKUP_DIR
+  read -r RSNAPSHOT_BACKUP_DIR
   echo ""
   echo -e "\e[91mSet rsnapshot backup directory to ${RSNAPSHOT_BACKUP_DIR}\e[0m"
   
@@ -70,26 +72,27 @@ configure_rsnapshot()
   rsnapshot configtest
 }
 
+# Download example .s3cfg file and update with Cloud Object Storage (S3) access key, secret key and endpoint 
 configure_s3cmd() { 
 
 	wget -O "$HOME/.s3cfg" https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/f6ce1f2248c415cefac4eec4f1c112ad4a03a0d1/s3cfg
 	echo 
 	echo 
 	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Access Key:\e[0m  "
-	read -s COS_ACCESS_KEY
+	read -r -s COS_ACCESS_KEY
 	sed -i "s|cos_access_key|$COS_ACCESS_KEY|" "$HOME"/.s3cfg
   echo ""
 	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Secret Key:\e[0m  "
-	read -s COS_SECRET_KEY
+	read -r -s COS_SECRET_KEY
 	sed -i "s|cos_secret_key|$COS_SECRET_KEY|" "$HOME/.s3cfg"
 	echo 
 	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Endpoint:\e[0m  "
-	read ENDPOINT 
+	read -r ENDPOINT 
   sed -i "s|cos_endpoint|$ENDPOINT|g" "$HOME/.s3cfg"
   echo ""
   echo -e "\r\033[K\e[36mWe will now test our config file by creating a test bucket based on your systems hostname.\e[0m"
   s3cmd mb s3://"$hst"
-  if [ $(s3cmd ls | egrep "$hst" | wc -l) = "1" ];then
+  if [ "$(s3cmd ls | grep -E -c "$hst")" = "1" ];then
     echo -e "\e[91ms3cmd configuration test passed. Now Removing test bucket.\e[0m"
     nohup s3cmd rb s3://"$hst" & disown 
   else
@@ -98,6 +101,7 @@ configure_s3cmd() {
   
 }
 
+# Echo out some post install information
 post_install() {
   echo -e "\r\033[K\e[36mInstallation and configuration of rsnapshot and s3cmd has completed.\e[0m"
   echo ""
@@ -109,8 +113,6 @@ post_install() {
 
 }
 
-
-
 #cos_backup_schedule() { 
 
 # This is what will determine the cron entries for s3cmd 
@@ -118,8 +120,10 @@ post_install() {
 
 #}
 
-# tar -czf $(date "+%F").backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
+# tar -czf ${today}.backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
 
+overview
+check_your_privilege
 set_install_variables
 install_tools
 configure_rsnapshot
