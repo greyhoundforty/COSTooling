@@ -60,13 +60,11 @@ configure_rsnapshot()
 {
   sudo mv /etc/rsnapshot.conf{,.bak}
   sudo wget -O /etc/rsnapshot.conf https://gist.githubusercontent.com/greyhoundforty/6b6975d973f5550fce69b71ed8485d34/raw/4091bb17f03dc9b0a3f745b348e686db14b4027e/rsnapshotv2.conf
-  echo
-  echo
+  echo ""
   echo -n -e "\r\033[K\e[36mPlease supply the directory you would like to use to store your backups. Use the full path with a trailing slash (example: /backups/)\e[0m  "
   read -r RSNAPSHOT_BACKUP_DIR
   echo ""
   echo -e "\e[91mSet rsnapshot backup directory to ${RSNAPSHOT_BACKUP_DIR}\e[0m"
-  
   sudo sed -i "s|BACKUP_DIR|$RSNAPSHOT_BACKUP_DIR|" /etc/rsnapshot.conf
   echo -e "\e[91mTesting rsnapshot configuration.\e[0m"
   rsnapshot configtest
@@ -76,28 +74,27 @@ configure_rsnapshot()
 configure_s3cmd() { 
 
 	wget -O "$HOME/.s3cfg" https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/f6ce1f2248c415cefac4eec4f1c112ad4a03a0d1/s3cfg
-	echo 
-	echo 
+	echo ""
 	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Access Key:\e[0m  "
 	read -r -s COS_ACCESS_KEY
 	sed -i "s|cos_access_key|$COS_ACCESS_KEY|" "$HOME"/.s3cfg
-  echo ""
+  	echo ""
 	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Secret Key:\e[0m  "
 	read -r -s COS_SECRET_KEY
 	sed -i "s|cos_secret_key|$COS_SECRET_KEY|" "$HOME/.s3cfg"
 	echo 
 	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Endpoint:\e[0m  "
 	read -r ENDPOINT 
-  sed -i "s|cos_endpoint|$ENDPOINT|g" "$HOME/.s3cfg"
-  echo ""
-  echo -e "\r\033[K\e[36mWe will now test our config file by creating a test bucket based on your systems hostname.\e[0m"
-  s3cmd mb s3://"$hst"
-  if [ "$(s3cmd ls | grep -E -c "$hst")" = "1" ];then
-    echo -e "\e[91ms3cmd configuration test passed. Now Removing test bucket.\e[0m"
-    nohup s3cmd rb s3://"$hst" & disown 
-  else
-    echo -e "\e[91mError: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.\e[0m"
-  fi
+  	sed -i "s|cos_endpoint|$ENDPOINT|g" "$HOME/.s3cfg"
+  	echo ""
+  	echo -e "\r\033[K\e[36mWe will now test our config file by creating a test bucket based on your systems hostname.\e[0m"
+  	$(s3cmd) mb s3://"$hst"
+  		if [ "$(s3cmd ls | grep -E -c "$hst")" = "1" ];then
+    		echo -e "\e[91ms3cmd configuration test passed. Now Removing test bucket.\e[0m"
+    		nohup $(s3cmd) rb s3://"$hst" & disown 
+  		else
+    		echo -e "\e[91mError: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.\e[0m"
+  		fi
   
 }
 
@@ -113,12 +110,16 @@ post_install() {
 
 }
 
+# Set a basic daily cron to compress our rsnapshot backup directory and send it to s3cmd 
 cos_backup_schedule() { 
 
+cat <<EOF > dailybackup
+00 5 * * * $(which tar) -czf ${today}.backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
+EOF
 
+sudo mv dailybackup /etc/cron.d/
 }
 
-# tar -czf ${today}.backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
 
 overview
 check_your_privilege
@@ -127,3 +128,4 @@ install_tools
 configure_rsnapshot
 configure_s3cmd
 post_install
+cos_backup_schedule
