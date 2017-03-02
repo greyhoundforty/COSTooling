@@ -3,7 +3,11 @@
 # Author: Ryan TIffany
 # Email: rtiffany@us.ibm.com
 
-# Script Variables 
+# Script Variables
+DIALOG='\033[0;36m' 
+WARNING='\033[0;31m'
+LINKY='\033[0;41m'
+NC='\033[0m'
 today=$(date "+%F")
 hst=$(hostname -s)
 
@@ -17,7 +21,7 @@ overview() {
 # If user is not root, the script will warn them that they will need to use sudo for the install and sed commands. 
 check_your_privilege () {
     if [[ "$(id -u)" != 0 ]]; then
-        echo -e "\e[91mNote: This setup script requires root permissions. You will be prompted for your sudo password.\e[0m"
+        echo -e "${WARNING}Note: This setup script requires root permissions. You will be prompted for your sudo password.${NC}"
         echo ""
     fi
 }
@@ -75,49 +79,54 @@ configure_s3cmd() {
 
 	wget -O "$HOME/.s3cfg" https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/f6ce1f2248c415cefac4eec4f1c112ad4a03a0d1/s3cfg
 	echo ""
-	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Access Key:\e[0m  "
+	echo -n -e "${DIALOG}Please supply your Cloud Object Storage (S3) Access Key:${NC}  "
 	read -r -s COS_ACCESS_KEY
 	sed -i "s|cos_access_key|$COS_ACCESS_KEY|" "$HOME"/.s3cfg
   	echo ""
-	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Secret Key:\e[0m  "
+	echo -n -e "${DIALOG}Please supply your Cloud Object Storage (S3) Secret Key:${NC}  "
 	read -r -s COS_SECRET_KEY
 	sed -i "s|cos_secret_key|$COS_SECRET_KEY|" "$HOME/.s3cfg"
 	echo 
-	echo -n -e "\r\033[K\e[36mPlease supply your Cloud Object Storage (S3) Endpoint:\e[0m  "
+	echo -n -e "${DIALOG}Please supply your Cloud Object Storage (S3) Endpoint:${NC}  "
 	read -r ENDPOINT 
   	sed -i "s|cos_endpoint|$ENDPOINT|g" "$HOME/.s3cfg"
   	echo ""
-  	echo -e "\r\033[K\e[36mWe will now test our config file by creating a test bucket based on your systems hostname.\e[0m"
+  	echo -e "${DIALOG}We will now test our config file by creating a test bucket based on your systems hostname.${NC}"
   	$(s3cmd) mb s3://"$hst"
   		if [ "$(s3cmd ls | grep -E -c "$hst")" = "1" ];then
-    		echo -e "\e[91ms3cmd configuration test passed. Now Removing test bucket.\e[0m"
-    		nohup $(s3cmd) rb s3://"$hst" & disown 
+    		echo -e "${DIALOG}3cmd configuration test passed. Now Removing test bucket.${NC}"
+    		nohup "$(s3cmd)" rb s3://"$hst" & disown 
   		else
-    		echo -e "\e[91mError: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.\e[0m"
+    		echo -e "${WARNING}Error: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.${NC}"
   		fi
   
 }
 
-# Echo out some post install information
-post_install() {
-  echo -e "\r\033[K\e[36mInstallation and configuration of rsnapshot and s3cmd has completed.\e[0m"
-  echo ""
-  echo -e "\e[91mPlease note that by default this script only configures rsnapshot to backup this system.\e[0m" 
-  echo -e "\e[91mIf you would like to add remote systems for rsnapshot to also backup, you will need to edit the /etc/rsnapshot.conf file.\e[0m"
-  echo -e "\e[91mThe following guide should assist in setting up remote hosts in rsnapshot:\e[0m" 
-
-  echo -e "\r\033[K\e[36mhttps://github.com/greyhoundforty/COSTooling/blob/master/rsnapshot.md\e[0m"
-
-}
-
 # Set a basic daily cron to compress our rsnapshot backup directory and send it to s3cmd 
 cos_backup_schedule() { 
-
+echo -e "${DIALOG}Setting Daily cron to send backups to Cloud Object Storage${NC}"
 cat <<EOF > dailybackup
 00 5 * * * $(which tar) -czf ${today}.backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
 EOF
 
 sudo mv dailybackup /etc/cron.d/
+}
+
+# Echo out some post install information
+post_install() {
+  echo ""
+  echo "-------------------------------------------------------------------------------"
+  echo -e "${DIALOG}Installation and configuration of rsnapshot and s3cmd has completed.${NC}\n"
+  echo -e "${DIALOG}Important file locations:${NC}"
+  echo -e "Rsnapshot Configuration File - ${LINKY}/etc/rsnapshot.conf${NC}"
+  echo -e "Rsnapshot Cronjob File - ${LINKY}/etc/rsnapshot.conf${NC}"
+  echo -e "Rsnapshot Configuration File - ${LINKY}/etc/cron.d/rsnapshot${NC}\n"
+  echo -e "${DIALOG}Please note that by default this script only configures rsnapshot to backup this system.${NC}" 
+  echo -e "${DIALOG}If you would like to add remote systems for rsnapshot to also backup, you will need to edit the ${LINKY}/etc/rsnapshot.conf file.${NC}\n"
+  echo -e "${DIALOG}The following guide should assist in setting up remote hosts in rsnapshot: ${LINKY}https://github.com/greyhoundforty/COSTooling/blob/master/rsnapshot.md${NC}\n"
+  echo -e "${DIALOG}This script also installed a basic daily cron job to compress the RSNAPSHOT_BACKUP_DIR, timestamp the backup with todays date and send it to Cloud Object Storage."
+  echo -e "${DIALOG}To update when this process runs please edit the file: ${LINKY}/etc/cron.d/dailybackup${NC}"
+  echo "-------------------------------------------------------------------------------"
 }
 
 
@@ -127,5 +136,5 @@ set_install_variables
 install_tools
 configure_rsnapshot
 configure_s3cmd
-post_install
 cos_backup_schedule
+post_install
