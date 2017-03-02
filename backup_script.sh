@@ -113,12 +113,10 @@ post_install() {
 
 }
 
-#cos_backup_schedule() { 
+cos_backup_schedule() { 
 
-# This is what will determine the cron entries for s3cmd 
-# to compress the backups and send them to COS (S3) 
 
-#}
+}
 
 # tar -czf ${today}.backup.tar.gz ${RSNAPSHOT_BACKUP_DIR}
 
