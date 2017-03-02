@@ -37,7 +37,7 @@ set_install_variables()	{
     elif [ "${OS_VENDOR}" = "CENTOS" ]; then
           OS_VENDOR="CENTOS"
     fi
-    OS_INSTALL_TOOL="/usr/bin/yum -y install"
+    OS_INSTALL_TOOL="sudo /usr/bin/yum -y install"
     MAJOR_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
       if [ "${OS_VENDOR}" = "REDHAT" ] && [ "${MAJOR_VERSION}" = "6" ]; then
         sudo rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm >/dev/null
@@ -50,13 +50,13 @@ set_install_variables()	{
       fi
   elif [ -e /usr/bin/lsb_release ] ; then
     echo -e "\r\033[K\e[36mDebian based distribution detected...\e[0m"
-    OS_INSTALL_TOOL="apt-get -y install"
+    OS_INSTALL_TOOL="sudo apt-get -y install"
   fi
 }
 
 # Install the needed packages for our backup configuration 
 install_tools() {
-	sudo "$OS_INSTALL_TOOL" s3cmd rsync rsnapshot wget >/dev/null 
+	"$OS_INSTALL_TOOL" s3cmd rsync rsnapshot wget >/dev/null 
 }
 
 # Download example rsnapshot.conf and set backup directory 
