@@ -10,6 +10,7 @@ LINKY='\033[0;41m'
 NC='\033[0m'
 today=$(date "+%F")
 hst=$(hostname -s)
+bck=$(tr -cd '[:lower:]' < /dev/urandom | fold -w10 | head -n1)
 
 # Short description 
 overview() { 
@@ -67,7 +68,7 @@ install_tools() {
 configure_rsnapshot()
 {
   sudo mv /etc/rsnapshot.conf{,.bak}
-  sudo wget -O /etc/rsnapshot.conf https://gist.githubusercontent.com/greyhoundforty/6b6975d973f5550fce69b71ed8485d34/raw/4091bb17f03dc9b0a3f745b348e686db14b4027e/rsnapshotv2.conf
+  sudo wget -O /etc/rsnapshot.conf https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/rsnapshot.conf
   echo
   echo
   echo -n -e "${DIALOG}Please supply the directory you would like to use to store your backups. Use the full path with a trailing slash (example: /backups/)${NC}  "
@@ -77,7 +78,7 @@ configure_rsnapshot()
   sudo sed -i "s|BACKUP_DIR|$RSNAPSHOT_BACKUP_DIR|" /etc/rsnapshot.conf
   echo -e "${DIALOG}Testing rsnapshot configuration.${NC}\n"
   rsnapshot configtest
-  # Ubuntu/Debian rsnapshot package includes a cron for rsnapshot, but cent/rhel does not 
+  # Ubuntu/Debian rsnapshot package includes a cron for rsnapshot, but cent/rhel does not so we'll set one if that is the case.
   if [ ! -f /etc/rsnapshot ]; then 
     $SUDO wget -O /etc/cron.d/rsnapshot https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/rsnapshotcron
   fi  
@@ -85,7 +86,7 @@ configure_rsnapshot()
 
 configure_s3cmd() { 
 
-	wget -O "$HOME/.s3cfg" https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/f6ce1f2248c415cefac4eec4f1c112ad4a03a0d1/s3cfg
+	wget -O "$HOME/.s3cfg" https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/s3cfg
 	echo 
 	echo 
 	echo -n -e "${DIALOG}Please supply your Cloud Object Storage (S3) Access Key:${NC}  "
@@ -100,11 +101,11 @@ configure_s3cmd() {
 	read -r ENDPOINT 
   sed -i "s|cos_endpoint|$ENDPOINT|g" "$HOME/.s3cfg"
   echo ""
-  echo -e "${DIALOG}We will now test our config file by creating a test bucket based on your systems hostname.${NC}"
-  $(which s3cmd) mb s3://"$hst"
-  if [ $(s3cmd ls | egrep "$hst" | wc -l) = "1" ];then
+  echo -e "${DIALOG}We will now test our config file by creating a randomly named test bucket.${NC}"
+  $(which s3cmd) mb s3://"$bck"
+  if [ "$(s3cmd ls | egrep "$bck" | wc -l)" = "1" ];then
     echo -e "${DIALOG}s3cmd configuration test passed. Now Removing test bucket.${NC}"
-  $(which s3cmd) rb s3://"$hst" 
+  $(which s3cmd) rb s3://"$bck" 
   else
     echo -e "${WARNING}Error: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.${NC}"
   fi
