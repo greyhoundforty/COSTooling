@@ -2,7 +2,7 @@
 
 This repository contains guides for using Open Source tools to backup Linux and Windows Servers to the [IBM Bluemix Cloud Object Storage (S3) service](http://www.softlayer.com/object-storage). The IBM Bluemix Cloud Object Storage (S3) service, sometimes shortened to COS (S3), allows you to store and access your data with our resilient service. With S3 API support, cross-region resiliency, and built-in security using SecureSlice technology, Cloud Object Storage (S3) Standard  allows you to create and manage buckets and provides credentials and endpoints for use with tools, applications, and gateways.
 
-[COS (S3): How it works](https://www.ibm.com/cloud-computing/products/storage/object-storage/how-it-works/)
+[COS (S3): How it works](https://www.ibm.com/cloud-computing/products/storage/object-storage/how-it-works/)  
 [COS (S3): API Guide](https://ibm-public-cos.github.io/crs-docs/)
 
 ## Windows
