@@ -1,9 +1,9 @@
 # Overview
-In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in Cloud Object Storage (S3). The command rsnapshot will be used to generate the backups of the host system as well as remote linux systems if required. The s3cmd utility is used to push these backups to Cloud Object Storage (S3). 
+In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in IBM Bluemix Cloud Object Storage (S3). The `rsnapshot` package will be used to generate the backups of the host system as well as remote linux systems if required. The `s3cmd` utility is used to push these backups to IBM Bluemix Cloud Object Storage (S3). 
 
 ## Prerequisites
 	- One or more linux server with rsnapshot, rsync, and s3cmd installed. 
-		- RHEL/CentOS: yum install s3cmd rsnapshot rsync (you may need to add the epel repo)
+		- RHEL/CentOS: yum install s3cmd rsnapshot rsync (you may need to add the epel repository as outlined http://www.tecmint.com/how-to-enable-epel-repository-for-rhel-centos-6-5/)
 		- Ubuntu/Debian: apt-get install s3cmd rsnapshot rsync 
 	- SSH-Keys generated on your main backup server. In this guide that is referred to as 'Backupserver'
 	- SSH port open on your servers firewall. Rsnapshot uses rsync, which in turn uses SSH to pull backups from the remote-hosts so you will want to ensure you have the proper port whitelisted. 
@@ -26,7 +26,7 @@ We are including an example `rsnapshot.conf` file that you can use as well. The 
  - The retention scheme is set to keep 6 alpha backups, 7 beta backups, and 4 gamma backups. We'll touch on the syntax a little but further down. 
  - Rsnapshot will backup /home, /etc, and /usr/local. You will need to adjust this to fit your needs. 
 
-[Example rsnapshot.conf](https://gist.githubusercontent.com/greyhoundforty/85686683e4f3b58618d08503da897287/raw/8f3c99a5dc664c44af5abb911c898a38b3e78ba0/rsnapshot.conf) 
+[Example rsnapshot.conf](https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/rsnapshot.conf) 
 
 **A Note About rsnapshot.conf** - The rsnapshot configuration file is very picky when it comes to tabs vs spaces. Always use tabs when editing the file. If there is an issue running `rsnapshot configtest` will show you the offending line. 
 
@@ -34,7 +34,7 @@ To use the example configuration file run the following commands:
 
 ```
 $ mv /etc/rsnapshot.conf{,.bak}
-$ wget -O /etc/rsnapshot.conf https://gist.githubusercontent.com/greyhoundforty/85686683e4f3b58618d08503da897287/raw/8f3c99a5dc664c44af5abb911c898a38b3e78ba0/rsnapshot.conf
+$ wget -O /etc/rsnapshot.conf https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/rsnapshot.conf
 ```
 
 The syntax here breaks down to all local `alpha `backups will go to /backups/alpha.X/localhost and the `alpha` backup for the remote server bck1 will go to /backups/alpha.X/bck1. 
@@ -124,26 +124,30 @@ retain	gamma	4
 #retain	delta	3
 ```
 
-This means that your server will keep 6 hourly backups, 7 daily backups, and 4 weekly backups. For example: When the `alpha` backup job runs for the 7th time the oldest backup is rotated out and deleted so that it only has 6 `alpha` backups. The rsnapshot utility also ships with a default cron.d file. 
+This means that your server will keep 6 hourly backups, 7 daily backups, and 4 weekly backups. For example: When the `alpha` backup job runs for the 7th time the oldest backup is rotated out and deleted so that it only has 6 `alpha` backups. The rsnapshot utility also ships with a default cron.d file on Debian/Ubuntu. For RHEL/Centos the package does not ship with a default cron file. In either case you will want to run the following command
 
 ```
-# 0 */4		* * *		root	/usr/bin/rsnapshot alpha
-# 30 3  	* * *		root	/usr/bin/rsnapshot beta
-# 0  3  	* * 1		root	/usr/bin/rsnapshot gamma
-# 30 2  	1 * *		root	/usr/bin/rsnapshot delta
+$ wget -O /etc/cron.d/rsnapshot https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/rsnapshotcron
 ```
 
-By default the `alpha` job will run every 4 hours, the beta every day at 03:30am, and so on. This is where you will want to customize to suit your needs and uncomment the lines in the cron file for the backups you would like to run. With rsnapshot taken care of, we will now move on to configuring `s3cmd`.
+```
+0 */4   * * *       root    /usr/bin/rsnapshot alpha
+0 21    * * *       root    /usr/bin/rsnapshot beta
+0  3    * * 1       root    /usr/bin/rsnapshot gamma
+# 30 2  1 * *       root    /usr/bin/rsnapshot delta
+```
+
+By default the `alpha` job will run every 4 hours, the beta every day at 9pm, and so on. This is where you will want to customize to suit your needs. With rsnapshot taken care of, we will now move on to configuring `s3cmd`.
 
 ## Configuring s3cmd
 
 The `s3cmd` python script is an open-source utility that allows a *nix or osx box to talk to S3 compatible services. After the utility is installed all the customer has to do is download our example `.s3cfg` file and update it with their COS Access and Secret Key:
 
 ```
- wget -O $HOME/.s3cfg https://gist.githubusercontent.com/greyhoundforty/676814921b8f4367fba7604e622d10f3/raw/422abaeb70f1c17cd5308745c0e446b047c123e0/s3cfg
+$ wget -O $HOME/.s3cfg https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/s3cfg
 ```
 
-The 2 lines that need to be updated are 2 and 55 (if they are using our example .s3cfg file). The lines begin with `access_key` and `secret_key` respectively. Once those lines have been updated with the COS details from the Customer portal you can test the connection by issuing the command `s3cmd ls` which will list all the buckets on the account. 
+The 5 lines that need to be updated are 2,30,31, and 55 (if using our example .s3cfg file). For lines 30 and 31 you will want to replace `cos_endpoint` with the Cloud Object Storage (S3) endpoint you are using. Once all the lines have been updated with the COS (S3) details from the Customer portal you can test the connection by issuing the command `s3cmd ls` which will list all the buckets on the account. 
 
 ```
 $ s3cmd ls                                                                                                                                                  
@@ -156,10 +160,9 @@ $ s3cmd ls
 
 **A Note About Buckets** - Cloud Object Storage (S3) has a 100 bucket limit per account. Keep this in mind if you set up each backup to create its own bucket or do a per month bucket.  
 
-
 ### Pushing backups to Cloud Object Storage (S3) 
 
-To manually push your backups to Cloud Object Storage (S3) I would recommend using tar to compress the backup directory with a date stamp for easier sorting should you need to pull the backups from Cloud Object Storage (S3) for restoration.
+To manually push your backups to Cloud Object Storage (S3) I would recommend using tar to compress the backup directory with a date stamp for easier sorting should you need to pull the backups from Cloud Object Storage (S3) for restoration. 
 
 ```
 tar -czf $(date "+%F").backup.tar.gz /backups/
