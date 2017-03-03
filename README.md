@@ -14,6 +14,8 @@ The Linux guide combines [rsnapshot](http://rsnapshot.org/) to backup both local
 ### Automated Backups in Linux 
 The included `backup_script.sh` is used to automate the process of installing and configuring `s3cmd` and `rsnapshot` for local "hot" backups and off-site "cold" backups. The script also sets up a cron job to compress the current `rsnapshot` backup directory every night at 10:30pm and push to the a bucket in Cloud Object Storage (S3).
 
+The Script has been tested on the following operating systems:
+
 [Root Install Centos 6](https://asciinema.org/a/ahouyhtvv8tl1z22n7tv8e1tt)
 
 [Sudo Install Centos 6](https://asciinema.org/a/as8hp9xxfnm01lyyfmacvefmh)
