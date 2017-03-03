@@ -77,6 +77,10 @@ configure_rsnapshot()
   sudo sed -i "s|BACKUP_DIR|$RSNAPSHOT_BACKUP_DIR|" /etc/rsnapshot.conf
   echo -e "${DIALOG}Testing rsnapshot configuration.${NC}\n"
   rsnapshot configtest
+  # Ubuntu/Debian rsnapshot package includes a cron for rsnapshot, but cent/rhel does not 
+  if [ ! -f /etc/rsnapshot ]; then 
+    $SUDO wget -O /etc/cron.d/rsnapshot https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/rsnapshotcron
+  fi  
 }
 
 configure_s3cmd() { 
