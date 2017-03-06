@@ -1,3 +1,15 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Overview](#overview)
+  - [Prerequisites](#prerequisites)
+  - [Running Duplicati for the first time](#running-duplicati-for-the-first-time)
+  - [Creating a Backup Job](#creating-a-backup-job)
+  - [Restoring Files](#restoring-files)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 ## Overview
 

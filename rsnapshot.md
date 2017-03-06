@@ -1,3 +1,16 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Overview](#overview)
+- [Prerequisites](#prerequisites)
+  - [Generate and copy ssh-key to remote hosts](#generate-and-copy-ssh-key-to-remote-hosts)
+- [Setting up and Configuring rsnapshot](#setting-up-and-configuring-rsnapshot)
+  - [Run a test backup](#run-a-test-backup)
+  - [Add other servers and adjust your schedule](#add-other-servers-and-adjust-your-schedule)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Overview 
 
 This guide will show you how to configure `rsnapshot` to backup your local system as well as remote linux hosts. This provides a centralized backup server that be configured with specific retention points in place. This can be used in conjuntion with something like `s3cmd` to push the backups to our Cloud Object Storage (S3) offering. 
