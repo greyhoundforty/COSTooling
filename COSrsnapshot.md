@@ -1,3 +1,23 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Overview](#overview)
+  - [Prerequisites](#prerequisites)
+    - [Servers:](#servers)
+    - [Generate and copy ssh-key to remote hosts](#generate-and-copy-ssh-key-to-remote-hosts)
+  - [Setting up and Configuring rsnapshot](#setting-up-and-configuring-rsnapshot)
+    - [Run a test backup](#run-a-test-backup)
+    - [Add other servers and adjust your schedule](#add-other-servers-and-adjust-your-schedule)
+  - [Configuring s3cmd](#configuring-s3cmd)
+    - [Creating our backup bucket](#creating-our-backup-bucket)
+    - [Pushing backups to Cloud Object Storage (S3)](#pushing-backups-to-cloud-object-storage-s3)
+  - [Restoring Files from Cloud Object Storage (S3)](#restoring-files-from-cloud-object-storage-s3)
+    - [To pull a single file or compressed backup](#to-pull-a-single-file-or-compressed-backup)
+    - [To pull a directory](#to-pull-a-directory)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Overview
 In this walk through we will be looking at utilizing `rsnapshot` and `s3cmd` to have local "hot" backups, and "cold" backups in IBM Bluemix Cloud Object Storage (S3). The `rsnapshot` package will be used to generate the backups of the host system as well as remote linux systems if required. The `s3cmd` utility is used to push these backups to IBM Bluemix Cloud Object Storage (S3). 
 
