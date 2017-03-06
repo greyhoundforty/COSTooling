@@ -129,7 +129,7 @@ post_install() {
   echo -e "${DIALOG}Installation and configuration of rsnapshot and s3cmd has completed.${NC}\n"
   echo -e "${DIALOG}Important file locations:${NC}"
   echo -e "Rsnapshot Configuration File - ${LINKY}/etc/rsnapshot.conf${NC}"
-  echo -e "Rsnapshot Cronjob File - ${LINKY}/etc/rsnapshot.conf${NC}"
+  echo -e "Rsnapshot Cronjob File - ${LINKY}/etc/cron.d/rsnapshot${NC}"
   echo -e "Rsnapshot Configuration File - ${LINKY}/etc/cron.d/rsnapshot${NC}\n"
   echo -e "${DIALOG}Please note that by default this script only configures rsnapshot to backup this system.${NC}" 
   echo -e "${DIALOG}If you would like to add remote systems for rsnapshot to also backup, you will need to edit the ${LINKY}/etc/rsnapshot.conf file.${NC}\n"
