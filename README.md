@@ -3,7 +3,9 @@
 **Table of Contents**  
 
 - [IBM Bluemix Cloud Object Storage (S3) Tools and Guides](#ibm-bluemix-cloud-object-storage-s3-tools-and-guides)
-  - [Windows](#windows)
+  - [Overview](#overview)
+  - [Windows GUI Backup using Duplicati](#windows-gui-backup-using-duplicati)
+    - [Windows Command Line Backup using Duplicati](#windows-command-line-backup-using-duplicati)
   - [Linux](#linux)
     - [Automated Backups in Linux](#automated-backups-in-linux)
 
@@ -17,8 +19,11 @@ This repository contains guides for using Open Source tools to backup Linux and 
 [COS (S3): How it works](https://www.ibm.com/cloud-computing/products/storage/object-storage/how-it-works/)  
 [COS (S3): API Guide](https://ibm-public-cos.github.io/crs-docs/)
 
-## Windows
-The Windows guide uses the Open Source tool [Duplicati](https://www.duplicati.com/) (version 2.0) to automate backing up to the IBM Bluemix Cloud Object Storage (S3) service. 
+## Windows GUI Backup using Duplicati
+This Windows guide uses the Open Source tool [Duplicati](https://www.duplicati.com/) (version 2.0) to automate backing up to the IBM Bluemix Cloud Object Storage (S3) service. 
+
+### Windows Command Line Backup using Duplicati 
+This Windows guide shows how to use the command line version of [Duplicati](https://www.duplicati.com/) to backup and restore your Windows server. 
 
 ## Linux 
 The Linux guide combines [rsnapshot](http://rsnapshot.org/) to backup both local and remote hosts, and [s3cmd](http://s3tools.org) to push the backups to COS (S3). There is also a [KnowledgeLayer](#) guide on how to use `s3cmd` to interact with your buckets.  

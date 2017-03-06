@@ -1,16 +1,16 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+**Table of Contents** 
 
 - [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Initial Duplicati Backup](#initial-duplicati-backup)
-- [Automating Duplicati Command line backups](#automating-duplicati-command-line-backups)
-- [Restoring Duplicati Command line backups](#restoring-duplicati-command-line-backups)
+  - [Prerequisites](#prerequisites)
+  - [Initial Duplicati Backup](#initial-duplicati-backup)
+  - [Automating Duplicati Command line backups](#automating-duplicati-command-line-backups)
+  - [Restoring Duplicati Command line backups](#restoring-duplicati-command-line-backups)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Overview
+# Overview
 
 In this guide we will show the process for using the Duplicati command line interface to automate server backups to Cloud Object Storage. 
 
@@ -81,6 +81,7 @@ Scanning local files ...
 
 ## Automating Duplicati Command line backups
 
+You can use the built in Task Scheduler in Windows to automate the backup of the server. See this [guide](https://msdn.microsoft.com/en-us/library/windows/desktop/aa383614(v=vs.85).aspx) for a good introduction to Task Scheduler. 
 
 ## Restoring Duplicati Command line backups
 
