@@ -152,13 +152,21 @@ The 5 lines that need to be updated are 2,30,31, and 55 (if using our example .s
 ```
 $ s3cmd ls                                                                                                                                                  
 2017-02-03 14:52  s3://backuptest
-2017-02-06 15:04  s3://coldbackups
 2017-02-03 21:23  s3://largebackup
 2017-02-07 20:49  s3://po9bmbnem531ehdreyfh-winbackup
 2017-02-07 17:44  s3://winbackup
 ```
 
-**A Note About Buckets** - Cloud Object Storage (S3) has a 100 bucket limit per account. Keep this in mind if you set up each backup to create its own bucket or do a per month bucket.  
+### Creating our backup bucket
+
+To create the bucket we will store our backups in we will use the `s3cmd mb` command. 
+
+**A Few Notes About Buckets** - Cloud Object Storage (S3) has a 100 bucket limit per account. Keep this in mind if you set up each backup to create its own bucket or do a per month bucket. Bucket names must be DNS-compliant. Names must be between 3 and 63 characters long, must be made of lowercase letters, numbers, and dashes, must be globally unique, and cannot appear to be an IP address. A common approach to ensuring uniqueness is to append a UUID or other distinctive suffix to bucket names. 
+
+```
+$ s3cmd mb s3://coldbackups/
+Bucket 's3://coldbackups/' created 
+``` 
 
 ### Pushing backups to Cloud Object Storage (S3) 
 
