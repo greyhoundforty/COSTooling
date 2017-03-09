@@ -7,6 +7,7 @@
   - [Running Duplicati for the first time](#running-duplicati-for-the-first-time)
   - [Creating a Backup Job](#creating-a-backup-job)
   - [Restoring Files](#restoring-files)
+    - [Restoring files on a new server.](#restoring-files-on-a-new-server)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -51,11 +52,11 @@ With your schedule set click Next and set the 'Upload' (chunk) size for the back
 
 ### Restoring Files
 
-The first time you start a restore process in Duplicati you will be prompted for your Cloud Object Storage (S3) credentials again. Follow the same steps as you did when first creating the backup including changing the Allowed SSL Versions under the Advanced Options settings. Test the connection and if everything worked, click Next. 
+You can initiate the restore process by clicking on Home and then the Name of your backup job. This will expand the information about the backup job and you will see a 'Restore files' link at under Operations.
 
-![Set restore credentials](http://i.imgur.com/BVdFBRy.png)
+![Starting the Restore](http://i.imgur.com/EGJDmnW.png)
 
-On the subsequent page enter the encryption password used when you created the backups or leave the box blank and click Next. On the following page you will see a box labeled 'Restore from' where you can select the specific backup you would like to restore from as as well as which files and directories you would like restored. After you have made your selections click Continue. 
+On the following page you will see a box labeled 'Restore from' where you can select the specific backup you would like to restore from as as well as which files and directories you would like restored. After you have made your selections click Continue. 
 
 ![Choose Files and Directories to restore](http://i.imgur.com/fG0vYDv.png)
 
@@ -64,3 +65,10 @@ When restoring files you have the option of restoring them to their original loc
 ![Location to restore files](http://i.imgur.com/dUV6fhl.png)
 
 This will start the restore process and give you a progress indicator along with an ETA on when the restore will be completed. 
+
+#### Restoring files on a new server. 
+
+If you need to restore files on a freshly installed or reinstalled version of Windows Server the first time you start a restore process you will be prompted for your Cloud Object Storage (S3) credentials again. Follow the same steps as you did when first creating the backup including changing the Allowed SSL Versions under the Advanced Options settings. Test the connection and if everything worked, click Next and on the subsequent page enter the encryption password used when you created the backups or leave the box blank and click Next. From there you can follow the restore process outlined above. 
+
+![Set restore credentials](http://i.imgur.com/BVdFBRy.png)
+
