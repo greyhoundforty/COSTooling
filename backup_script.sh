@@ -114,7 +114,7 @@ configure_s3cmd() {
 
 # Set a basic daily cron to compress our rsnapshot backup directory and send it to s3cmd 
 cos_backup_schedule() { 
-$SUDO wget -O /usr/local/bin/coscron.sh https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/s3cfg
+$SUDO wget -O /usr/local/bin/coscron.sh https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/coscron.sh
 $SUDO chmod +x /usr/local/bin/coscron.sh
 echo -e "${DIALOG}Setting Daily cron to send backups to Cloud Object Storage${NC}"
 cat <<EOF > dailybackup
@@ -132,7 +132,8 @@ post_install() {
   echo -e "${DIALOG}Important file locations:${NC}"
   echo -e "Rsnapshot Configuration File - ${LINKY}/etc/rsnapshot.conf${NC}"
   echo -e "Rsnapshot Cronjob File - ${LINKY}/etc/cron.d/rsnapshot${NC}"
-  echo -e "s3cmd Configuration File - ${LINKY}\$HOME/.s3cfg${NC}\n"
+  echo -e "s3cmd Configuration File - ${LINKY}\$HOME/.s3cfg${NC}"
+  echo -e "COS Backup Script - ${LINKY}/usr/local/bin/coscron.sh${NC}\n"
   echo -e "${DIALOG}Please note that by default this script only configures rsnapshot to backup this system.${NC}" 
   echo -e "${DIALOG}If you would like to add remote systems for rsnapshot to also backup, you will need to edit the ${LINKY}/etc/rsnapshot.conf file.${NC}\n"
   echo -e "${DIALOG}The following guide should assist in setting up remote hosts in rsnapshot: ${LINKY}https://github.com/greyhoundforty/COSTooling/blob/master/rsnapshot.md${NC}\n"
