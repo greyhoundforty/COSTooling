@@ -10,7 +10,7 @@ LINKY='\033[0;41m'
 NC='\033[0m'
 today=$(date "+%F")
 hst=$(hostname -s)
-bck=$(tr -cd '[:lower:]' < /dev/urandom | fold -w10 | head -n1)
+bck=$(date | md5sum | awk '{print $1}')
 
 # Short description 
 overview() { 
