@@ -109,13 +109,20 @@ configure_s3cmd() {
   else
     echo -e "${WARNING}Error: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.${NC}"
   fi
+  echo 
   
+
 }
 
 # Set a basic daily cron to compress our rsnapshot backup directory and send it to s3cmd 
 cos_backup_schedule() { 
 $SUDO wget -O /usr/local/bin/coscron.sh https://raw.githubusercontent.com/greyhoundforty/COSTooling/master/coscron.sh
 $SUDO chmod +x /usr/local/bin/coscron.sh
+echo 
+echo -n -e "${DIALOG}Please supply the name of the bucket you would like to use for backups.${NC}  "
+read -r COS_BUCKET
+$SUDO sed -i "s|COSBUCKET|$COS_BUCKET|g" /usr/local/bin/coscron.sh 
+echo 
 echo -e "${DIALOG}Setting Daily cron to send backups to Cloud Object Storage${NC}"
 cat <<EOF > dailybackup
 00 22 * * * $(which bash) /usr/local/bin/coscron.sh 
@@ -139,7 +146,7 @@ post_install() {
   echo -e "${DIALOG}The following guide should assist in setting up remote hosts in rsnapshot: ${LINKY}https://github.com/greyhoundforty/COSTooling/blob/master/rsnapshot.md${NC}\n"
   echo -e "${DIALOG}This script also installed a basic daily cron job to run a script that compresses the RSNAPSHOT_BACKUP_DIR,${NC}"
   echo -e "${DIALOG}timestamps the backup with todays date and sends it to Cloud Object Storage (S3)."
-  echo -e "${DIALOG}To update when this process runs please edit the file: ${LINKY}/etc/cron.d/dailybackup${NC}"
+  echo -e "${DIALOG}If you would like to edit the times the script runs please edit: ${LINKY}/etc/cron.d/dailybackup${NC}"
   echo "-------------------------------------------------------------------------------"
 }
 
