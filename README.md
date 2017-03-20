@@ -20,13 +20,13 @@ This repository contains guides for using Open Source tools to backup Linux and 
 [COS (S3): API Guide](https://ibm-public-cos.github.io/crs-docs/)
 
 ## Windows GUI Backup using Duplicati
-This [Windows guide](https://github.ibm.com/rtiffany/IBMCOSTooling/blob/master/WinDuplicati.md) uses the Open Source tool [Duplicati](https://www.duplicati.com/) (version 2.0) to automate backing up to the IBM Bluemix Cloud Object Storage (S3) service. 
+This [Windows guide](https://github.com/greyhoundforty/COSTooling/blob/master/WinDuplicati.md) uses the Open Source tool [Duplicati](https://www.duplicati.com/) (version 2.0) to automate backing up to the IBM Bluemix Cloud Object Storage (S3) service. 
 
 ### Windows Command Line Backup using Duplicati 
-This [Windows guide](https://github.ibm.com/rtiffany/IBMCOSTooling/blob/master/windowsCommandLineCOS.md) shows how to use the command line version of [Duplicati](https://www.duplicati.com/) to backup and restore your Windows server. 
+This [Windows guide](https://github.com/greyhoundforty/COSTooling/blob/master/windowsCommandLineCOS.md) shows how to use the command line version of [Duplicati](https://www.duplicati.com/) to backup and restore your Windows server. 
 
 ## Linux 
-The [Linux guide](https://github.ibm.com/rtiffany/IBMCOSTooling/blob/master/COSrsnapshot.md) combines [rsnapshot](http://rsnapshot.org/) to backup both local and remote hosts, and [s3cmd](http://s3tools.org) to push the backups to COS (S3). There is also a [KnowledgeLayer](#) guide on how to use `s3cmd` to interact with your buckets.  
+The [Linux guide](https://github.com/greyhoundforty/COSTooling/blob/master/COSrsnapshot.md) combines [rsnapshot](http://rsnapshot.org/) to backup both local and remote hosts, and [s3cmd](http://s3tools.org) to push the backups to COS (S3). There is also a [KnowledgeLayer](#) guide on how to use `s3cmd` to interact with your buckets.  
 
 ### Automated Backups in Linux 
 The included `backup_script.sh` is used to automate the process of installing and configuring `s3cmd` and `rsnapshot` for local "hot" backups and off-site "cold" backups. The script also sets up a cron job to compress the current `rsnapshot` backup directory every night at 10:30pm and push to the a bucket in Cloud Object Storage (S3).
