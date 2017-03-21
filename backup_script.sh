@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Author: Ryan TIffany
+# Author: Ryan Tiffany
 # Email: rtiffany@us.ibm.com
 
 # Script Variables
