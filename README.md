@@ -29,7 +29,17 @@ This [Windows guide](https://github.com/greyhoundforty/COSTooling/blob/master/wi
 The [Linux guide](https://github.com/greyhoundforty/COSTooling/blob/master/COSrsnapshot.md) combines [rsnapshot](http://rsnapshot.org/) to backup both local and remote hosts, and [s3cmd](http://s3tools.org) to push the backups to COS (S3). There is also a [KnowledgeLayer](#) guide on how to use `s3cmd` to interact with your buckets.  
 
 ### Automated Backups in Linux 
-The included `backup_script.sh` is used to automate the process of installing and configuring `s3cmd` and `rsnapshot` for local "hot" backups and off-site "cold" backups. The script also sets up a cron job to compress the current `rsnapshot` backup directory every night at 10:30pm and push to the a bucket in Cloud Object Storage (S3).
+The included `backup_script.sh` is used to automate the process of installing and configuring `s3cmd` and `rsnapshot` for local "hot" backups and off-site "cold" backups. The script also sets up a cron job to compress the current `rsnapshot` backup directory every night at 10pm and push to a bucket in Cloud Object Storage (S3).
+
+The script is broken down in to functions that I will explain here: 
+
+- check_your_privilege: This function will check if you are root or not. If you are not root the script will assign sudo to the commands
+- set_install_variables: Determines the underlying OS so that it can set install variables 
+- install_tools: Installs s3cmd, rsnapshot, rsync, and wget
+- configure_rsnapshot: Downloads our example rsnapshot.conf file and prompts you to set the directory where rsnapshot stores backups. Also downloads the rsnapshot cron file for automated backups. 
+- configure_s3cmd: Downloads example s3cmd configuration file and prompts the user for their COS (S3) Access and Secret Keys as well as the COS (S3) endpoint to use. This function also creates a randomly named bucket to test that s3cmd is configured properly. 
+- cos_backup_schedule: Downloads a script that will compress your rsnapshot backup directory and send it to COS (S3) using s3cmd. Function also sets up a daily cron to run that script at 10pm evey night. 
+- post_install: Prints information about the install
 
 The Script has been tested on the following operating systems:
 
