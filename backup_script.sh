@@ -11,6 +11,7 @@ NC='\033[0m'
 today=$(date "+%F")
 hst=$(hostname -s)
 bck=$(date | md5sum | awk '{print $1}')
+ident=$(whoami)
 
 # Short description 
 overview() { 
@@ -109,9 +110,8 @@ configure_s3cmd() {
   else
     echo -e "${WARNING}Error: Bucket creation did not succeed, double check your HOME/.s3cfg configuration file.${NC}"
   fi
-  echo 
-  
-
+  echo
+  $SUDO cp "$HOME/.s3cfg" /etc/.s3cfg 
 }
 
 # Set a basic daily cron to compress our rsnapshot backup directory and send it to s3cmd 
@@ -126,6 +126,8 @@ echo
 echo -e "${DIALOG}Setting Daily cron to send backups to Cloud Object Storage${NC}"
 echo "00 22 * * * root $(which bash) /usr/local/bin/coscron.sh" > "$HOME/dailybackup"
 $SUDO mv "$HOME/dailybackup" /etc/cron.d/
+$SUDO chown root: /etc/cron.d/dailybackup
+$SUDO chmod 0644 /etc/cron.d/dailybackup
 }
 
 # Echo out some post install information

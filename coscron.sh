@@ -15,5 +15,5 @@ fi
 
 # Run compress and send and then remove backup archive
 $(which tar) -czvf "$HOME/${today}.backup.tar.gz" "${RSNAPSHOT_BACKUP_DIR}" >> "$outputLog"
-$(which s3cmd) put "$HOME/${today}.backup.tar.gz" s3://COSBUCKET >> "$outputLog"
+$(which s3cmd) -c /etc/.s3cfg put "$HOME/${today}.backup.tar.gz" s3://COSBUCKET >> "$outputLog"
 rm -f "$HOME/${today}.backup.tar.gz" 
