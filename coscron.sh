@@ -5,14 +5,15 @@
 
 # Script Variables
 outputLog="$HOME/coscron.log"
-
 today=$(date "+%F")
 RSNAPSHOT_BACKUP_DIR=$(sed -e 's/#.*$//' -e '/^$/d' /etc/rsnapshot.conf | grep snapshot_root | awk '{print $2}')
 
+# Create output log if it does not exist
 if [[ ! -f "$outputLog" ]]; then
 	touch "$outputLog"
 fi	
 
-$(which tar) -czvf /"${today}.backup.tar.gz" "${RSNAPSHOT_BACKUP_DIR}" >> "$outputLog"
-$(which s3cmd) put /"${today}.backup.tar.gz" s3://COSBUCKET >> "$outputLog"
-rm -f /"${today}.backup.tar.gz" 
+# Run compress and send and then remove backup archive
+$(which tar) -czvf "$HOME/${today}.backup.tar.gz" "${RSNAPSHOT_BACKUP_DIR}" >> "$outputLog"
+$(which s3cmd) put "$HOME/${today}.backup.tar.gz" s3://COSBUCKET >> "$outputLog"
+rm -f "$HOME/${today}.backup.tar.gz" 

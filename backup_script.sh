@@ -124,11 +124,8 @@ read -r COS_BUCKET
 $SUDO sed -i "s|COSBUCKET|$COS_BUCKET|g" /usr/local/bin/coscron.sh 
 echo 
 echo -e "${DIALOG}Setting Daily cron to send backups to Cloud Object Storage${NC}"
-cat <<EOF > dailybackup
-00 22 * * * $(which bash) /usr/local/bin/coscron.sh 
-EOF
-
-sudo mv dailybackup /etc/cron.d/
+echo "00 22 * * * $(whoami) $(which bash) /usr/local/bin/coscron.sh" > "$HOME/dailybackup"
+$SUDO mv "$HOME/dailybackup" /etc/cron.d/
 }
 
 # Echo out some post install information
