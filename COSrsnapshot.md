@@ -132,7 +132,7 @@ Now that you have tested rsnapshot go ahead and add additional servers to `rsnap
 alpha = hourly backups
 beta = daily backups 
 gamma = weekly backups 
-delta = monhtly backups
+delta = monthly backups
 ```
 
 By default rsnapshot ships with the following retention scheme.
